@@ -691,6 +691,23 @@ function getFormatObj(gd, formatKeys) {
  * @returns {object} {numberFormat, timeFormat} d3 formatter factory functions
  *   for numbers and time
  */
+const formatTimeDuration = (milliseconds) => {
+  if (milliseconds === undefined || milliseconds === null) {
+    return "n/d";
+  }
+  const seconds = Math.floor((milliseconds / 1000) % 60);
+  const minutes = Math.floor((milliseconds / 1000 / 60) % 60);
+  const hours = Math.floor(milliseconds / 1000 / 60 / 60);
+  return (
+    hours.toString().padStart(2, "0") +
+    "h " +
+    minutes.toString().padStart(2, "0") +
+    "m " +
+    seconds.toString().padStart(2, "0") +
+    "s"
+  );
+};
+
 function getFormatter(formatObj, separators) {
     formatObj.decimal = separators.charAt(0);
     formatObj.thousands = separators.charAt(1);
@@ -698,6 +715,21 @@ function getFormatter(formatObj, separators) {
     return {
         numberFormat: function(formatStr) {
             try {
+                if (formatStr == "onoff") {
+                    return (x) => {
+                        return x ? "ON" : "OFF";
+                    };
+                } else if (formatStr == "duration") {
+                    return formatTimeDuration;
+                } else if (formatStr == "durationh") {
+                    return (x) => {
+                        return (
+                        Math.floor(x / 1000 / 60 / 60)
+                            .toString()
+                            .padStart(2, "0") + "h "
+                        );
+                    };
+                }
                 formatStr = formatLocale(formatObj).format(
                     Lib.adjustFormat(formatStr)
                 );
