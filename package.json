@@ -3,7 +3,7 @@
   "version": "3.1.0",
   "description": "The open source javascript graphing library that powers plotly",
   "license": "MIT",
-  "main": "./lib/index.js",
+  "main": "./dist/plotly-optimo.js",
   "webpack": "./dist/plotly.js",
   "repository": {
     "type": "git",
