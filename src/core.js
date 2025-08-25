@@ -81,3 +81,5 @@ exports.Fx = {
 };
 exports.Snapshot = require('./snapshot');
 exports.PlotSchema = require('./plot_api/plot_schema');
+exports.formatLocale = require('d3-format');
+exports.adjustFormat = require('../lib').adjustFormat;
