@@ -59210,6 +59210,7 @@ var Plotly = (() => {
       };
       exports.Snapshot = require_snapshot();
       exports.PlotSchema = require_plot_schema();
+      exports.registry = require_registry();
     }
   });
 

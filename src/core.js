@@ -81,3 +81,4 @@ exports.Fx = {
 };
 exports.Snapshot = require('./snapshot');
 exports.PlotSchema = require('./plot_api/plot_schema');
+exports.registry = require('./registry');
