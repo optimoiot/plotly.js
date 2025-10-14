@@ -5,7 +5,7 @@
 [![MIT License](https://img.shields.io/badge/License-MIT-brightgreen.svg)](https://github.com/plotly/plotly.js/blob/master/LICENSE)
 
 ```
-npm run custom-bundle -- --traces scatter,bar,box,heatmap,pie,surface,sankey --unminified --out optimo
+npm run custom-bundle -- --traces scatter,bar,box,heatmap,pie,surface,sankey,histogram --unminified --out optimo
 cp dist/plotly-optimo.js /home/alessandro/code/optimo/web-ui/node_modules/plotly.js/dist/plotly-optimo.js
 ```
 

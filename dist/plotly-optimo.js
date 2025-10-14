@@ -65104,8 +65104,540 @@ var Plotly = (() => {
     }
   });
 
-  // src/traces/pie/attributes.js
+  // src/traces/histogram/bin_attributes.js
+  var require_bin_attributes = __commonJS({
+    "src/traces/histogram/bin_attributes.js"(exports, module) {
+      "use strict";
+      module.exports = function makeBinAttrs(axLetter, match) {
+        return {
+          start: {
+            valType: "any",
+            // for date axes
+            editType: "calc"
+          },
+          end: {
+            valType: "any",
+            // for date axes
+            editType: "calc"
+          },
+          size: {
+            valType: "any",
+            // for date axes
+            editType: "calc"
+          },
+          editType: "calc"
+        };
+      };
+    }
+  });
+
+  // src/traces/histogram/constants.js
+  var require_constants15 = __commonJS({
+    "src/traces/histogram/constants.js"(exports, module) {
+      "use strict";
+      module.exports = {
+        eventDataKeys: ["binNumber"]
+      };
+    }
+  });
+
+  // src/traces/histogram/attributes.js
   var require_attributes26 = __commonJS({
+    "src/traces/histogram/attributes.js"(exports, module) {
+      "use strict";
+      var barAttrs = require_attributes23();
+      var axisHoverFormat = require_axis_format_attributes().axisHoverFormat;
+      var hovertemplateAttrs = require_template_attributes().hovertemplateAttrs;
+      var texttemplateAttrs = require_template_attributes().texttemplateAttrs;
+      var fontAttrs = require_font_attributes();
+      var makeBinAttrs = require_bin_attributes();
+      var constants = require_constants15();
+      var extendFlat = require_extend().extendFlat;
+      module.exports = {
+        x: {
+          valType: "data_array",
+          editType: "calc+clearAxisTypes"
+        },
+        y: {
+          valType: "data_array",
+          editType: "calc+clearAxisTypes"
+        },
+        xhoverformat: axisHoverFormat("x"),
+        yhoverformat: axisHoverFormat("y"),
+        text: extendFlat({}, barAttrs.text, {}),
+        hovertext: extendFlat({}, barAttrs.hovertext, {}),
+        orientation: barAttrs.orientation,
+        histfunc: {
+          valType: "enumerated",
+          values: ["count", "sum", "avg", "min", "max"],
+          dflt: "count",
+          editType: "calc"
+        },
+        histnorm: {
+          valType: "enumerated",
+          values: ["", "percent", "probability", "density", "probability density"],
+          dflt: "",
+          editType: "calc"
+        },
+        cumulative: {
+          enabled: {
+            valType: "boolean",
+            dflt: false,
+            editType: "calc"
+          },
+          direction: {
+            valType: "enumerated",
+            values: ["increasing", "decreasing"],
+            dflt: "increasing",
+            editType: "calc"
+          },
+          currentbin: {
+            valType: "enumerated",
+            values: ["include", "exclude", "half"],
+            dflt: "include",
+            editType: "calc"
+          },
+          editType: "calc"
+        },
+        nbinsx: {
+          valType: "integer",
+          min: 0,
+          dflt: 0,
+          editType: "calc"
+        },
+        xbins: makeBinAttrs("x", true),
+        nbinsy: {
+          valType: "integer",
+          min: 0,
+          dflt: 0,
+          editType: "calc"
+        },
+        ybins: makeBinAttrs("y", true),
+        autobinx: {
+          valType: "boolean",
+          dflt: null,
+          editType: "calc"
+        },
+        autobiny: {
+          valType: "boolean",
+          dflt: null,
+          editType: "calc"
+        },
+        bingroup: {
+          valType: "string",
+          dflt: "",
+          editType: "calc"
+        },
+        hovertemplate: hovertemplateAttrs({}, {
+          keys: constants.eventDataKeys
+        }),
+        texttemplate: texttemplateAttrs({
+          arrayOk: false,
+          editType: "plot"
+        }, {
+          keys: ["label", "value"]
+        }),
+        textposition: extendFlat({}, barAttrs.textposition, {
+          arrayOk: false
+        }),
+        textfont: fontAttrs({
+          arrayOk: false,
+          editType: "plot",
+          colorEditType: "style"
+        }),
+        outsidetextfont: fontAttrs({
+          arrayOk: false,
+          editType: "plot",
+          colorEditType: "style"
+        }),
+        insidetextfont: fontAttrs({
+          arrayOk: false,
+          editType: "plot",
+          colorEditType: "style"
+        }),
+        insidetextanchor: barAttrs.insidetextanchor,
+        textangle: barAttrs.textangle,
+        cliponaxis: barAttrs.cliponaxis,
+        constraintext: barAttrs.constraintext,
+        marker: barAttrs.marker,
+        offsetgroup: barAttrs.offsetgroup,
+        alignmentgroup: barAttrs.alignmentgroup,
+        selected: barAttrs.selected,
+        unselected: barAttrs.unselected,
+        zorder: barAttrs.zorder
+      };
+    }
+  });
+
+  // src/traces/histogram/defaults.js
+  var require_defaults22 = __commonJS({
+    "src/traces/histogram/defaults.js"(exports, module) {
+      "use strict";
+      var Registry = require_registry();
+      var Lib = require_lib();
+      var Color2 = require_color();
+      var handleText = require_defaults19().handleText;
+      var handleStyleDefaults = require_style_defaults();
+      var attributes = require_attributes26();
+      module.exports = function supplyDefaults(traceIn, traceOut, defaultColor, layout) {
+        function coerce(attr, dflt) {
+          return Lib.coerce(traceIn, traceOut, attributes, attr, dflt);
+        }
+        var x = coerce("x");
+        var y = coerce("y");
+        var cumulative = coerce("cumulative.enabled");
+        if (cumulative) {
+          coerce("cumulative.direction");
+          coerce("cumulative.currentbin");
+        }
+        coerce("text");
+        var textposition = coerce("textposition");
+        handleText(traceIn, traceOut, layout, coerce, textposition, {
+          moduleHasSelected: true,
+          moduleHasUnselected: true,
+          moduleHasConstrain: true,
+          moduleHasCliponaxis: true,
+          moduleHasTextangle: true,
+          moduleHasInsideanchor: true
+        });
+        coerce("hovertext");
+        coerce("hovertemplate");
+        coerce("xhoverformat");
+        coerce("yhoverformat");
+        var orientation = coerce("orientation", y && !x ? "h" : "v");
+        var sampleLetter = orientation === "v" ? "x" : "y";
+        var aggLetter = orientation === "v" ? "y" : "x";
+        var len = x && y ? Math.min(Lib.minRowLength(x) && Lib.minRowLength(y)) : Lib.minRowLength(traceOut[sampleLetter] || []);
+        if (!len) {
+          traceOut.visible = false;
+          return;
+        }
+        traceOut._length = len;
+        var handleCalendarDefaults = Registry.getComponentMethod("calendars", "handleTraceDefaults");
+        handleCalendarDefaults(traceIn, traceOut, ["x", "y"], layout);
+        var hasAggregationData = traceOut[aggLetter];
+        if (hasAggregationData) coerce("histfunc");
+        coerce("histnorm");
+        coerce("autobin" + sampleLetter);
+        handleStyleDefaults(traceIn, traceOut, coerce, defaultColor, layout);
+        Lib.coerceSelectionMarkerOpacity(traceOut, coerce);
+        var lineColor = (traceOut.marker.line || {}).color;
+        var errorBarsSupplyDefaults = Registry.getComponentMethod("errorbars", "supplyDefaults");
+        errorBarsSupplyDefaults(traceIn, traceOut, lineColor || Color2.defaultLine, { axis: "y" });
+        errorBarsSupplyDefaults(traceIn, traceOut, lineColor || Color2.defaultLine, { axis: "x", inherit: "y" });
+        coerce("zorder");
+      };
+    }
+  });
+
+  // src/traces/histogram/cross_trace_defaults.js
+  var require_cross_trace_defaults3 = __commonJS({
+    "src/traces/histogram/cross_trace_defaults.js"(exports, module) {
+      "use strict";
+      var Lib = require_lib();
+      var axisIds = require_axis_ids();
+      var traceIs = require_registry().traceIs;
+      var handleGroupingDefaults = require_grouping_defaults();
+      var validateCornerradius = require_defaults19().validateCornerradius;
+      var nestedProperty = Lib.nestedProperty;
+      var getAxisGroup = require_constraints().getAxisGroup;
+      var BINATTRS = [
+        { aStr: { x: "xbins.start", y: "ybins.start" }, name: "start" },
+        { aStr: { x: "xbins.end", y: "ybins.end" }, name: "end" },
+        { aStr: { x: "xbins.size", y: "ybins.size" }, name: "size" },
+        { aStr: { x: "nbinsx", y: "nbinsy" }, name: "nbins" }
+      ];
+      var BINDIRECTIONS = ["x", "y"];
+      module.exports = function crossTraceDefaults(fullData, fullLayout) {
+        var allBinOpts = fullLayout._histogramBinOpts = {};
+        var histTraces = [];
+        var mustMatchTracesLookup = {};
+        var otherTracesList = [];
+        var traceOut, traces, groupName, binDir;
+        var i, j, k;
+        function coerce(attr2, dflt) {
+          return Lib.coerce(traceOut._input, traceOut, traceOut._module.attributes, attr2, dflt);
+        }
+        function orientation2binDir(traceOut2) {
+          return traceOut2.orientation === "v" ? "x" : "y";
+        }
+        function getAxisType(traceOut2, binDir2) {
+          var ax = axisIds.getFromTrace({ _fullLayout: fullLayout }, traceOut2, binDir2);
+          return ax.type;
+        }
+        function fillBinOpts(traceOut2, groupName2, binDir2) {
+          var fallbackGroupName = traceOut2.uid + "__" + binDir2;
+          if (!groupName2) groupName2 = fallbackGroupName;
+          var axType = getAxisType(traceOut2, binDir2);
+          var calendar = traceOut2[binDir2 + "calendar"] || "";
+          var binOpts2 = allBinOpts[groupName2];
+          var needsNewItem = true;
+          if (binOpts2) {
+            if (axType === binOpts2.axType && calendar === binOpts2.calendar) {
+              needsNewItem = false;
+              binOpts2.traces.push(traceOut2);
+              binOpts2.dirs.push(binDir2);
+            } else {
+              groupName2 = fallbackGroupName;
+              if (axType !== binOpts2.axType) {
+                Lib.warn([
+                  "Attempted to group the bins of trace",
+                  traceOut2.index,
+                  "set on a",
+                  "type:" + axType,
+                  "axis",
+                  "with bins on",
+                  "type:" + binOpts2.axType,
+                  "axis."
+                ].join(" "));
+              }
+              if (calendar !== binOpts2.calendar) {
+                Lib.warn([
+                  "Attempted to group the bins of trace",
+                  traceOut2.index,
+                  "set with a",
+                  calendar,
+                  "calendar",
+                  "with bins",
+                  binOpts2.calendar ? "on a " + binOpts2.calendar + " calendar" : "w/o a set calendar"
+                ].join(" "));
+              }
+            }
+          }
+          if (needsNewItem) {
+            allBinOpts[groupName2] = {
+              traces: [traceOut2],
+              dirs: [binDir2],
+              axType,
+              calendar: traceOut2[binDir2 + "calendar"] || ""
+            };
+          }
+          traceOut2["_" + binDir2 + "bingroup"] = groupName2;
+        }
+        for (i = 0; i < fullData.length; i++) {
+          traceOut = fullData[i];
+          if (traceIs(traceOut, "histogram")) {
+            histTraces.push(traceOut);
+            delete traceOut._xautoBinFinished;
+            delete traceOut._yautoBinFinished;
+            if (traceOut.type === "histogram") {
+              var r = coerce("marker.cornerradius", fullLayout.barcornerradius);
+              if (traceOut.marker) {
+                traceOut.marker.cornerradius = validateCornerradius(r);
+              }
+            }
+            if (!traceIs(traceOut, "2dMap")) {
+              handleGroupingDefaults(traceOut._input, traceOut, fullLayout, coerce, fullLayout.barmode);
+            }
+          }
+        }
+        var alignmentOpts = fullLayout._alignmentOpts || {};
+        for (i = 0; i < histTraces.length; i++) {
+          traceOut = histTraces[i];
+          groupName = "";
+          if (!traceIs(traceOut, "2dMap")) {
+            binDir = orientation2binDir(traceOut);
+            if (fullLayout.barmode === "group" && traceOut.alignmentgroup) {
+              var pa = traceOut[binDir + "axis"];
+              var aGroupId = getAxisGroup(fullLayout, pa) + traceOut.orientation;
+              if ((alignmentOpts[aGroupId] || {})[traceOut.alignmentgroup]) {
+                groupName = aGroupId;
+              }
+            }
+            if (!groupName && fullLayout.barmode !== "overlay") {
+              groupName = getAxisGroup(fullLayout, traceOut.xaxis) + getAxisGroup(fullLayout, traceOut.yaxis) + orientation2binDir(traceOut);
+            }
+          }
+          if (groupName) {
+            if (!mustMatchTracesLookup[groupName]) {
+              mustMatchTracesLookup[groupName] = [];
+            }
+            mustMatchTracesLookup[groupName].push(traceOut);
+          } else {
+            otherTracesList.push(traceOut);
+          }
+        }
+        for (groupName in mustMatchTracesLookup) {
+          traces = mustMatchTracesLookup[groupName];
+          if (traces.length === 1) {
+            otherTracesList.push(traces[0]);
+            continue;
+          }
+          var binGroupFound = false;
+          if (traces.length) {
+            traceOut = traces[0];
+            binGroupFound = coerce("bingroup");
+          }
+          groupName = binGroupFound || groupName;
+          for (i = 0; i < traces.length; i++) {
+            traceOut = traces[i];
+            var bingroupIn = traceOut._input.bingroup;
+            if (bingroupIn && bingroupIn !== groupName) {
+              Lib.warn([
+                "Trace",
+                traceOut.index,
+                "must match",
+                "within bingroup",
+                groupName + ".",
+                "Ignoring its bingroup:",
+                bingroupIn,
+                "setting."
+              ].join(" "));
+            }
+            traceOut.bingroup = groupName;
+            fillBinOpts(traceOut, groupName, orientation2binDir(traceOut));
+          }
+        }
+        for (i = 0; i < otherTracesList.length; i++) {
+          traceOut = otherTracesList[i];
+          var binGroup = coerce("bingroup");
+          if (traceIs(traceOut, "2dMap")) {
+            for (k = 0; k < 2; k++) {
+              binDir = BINDIRECTIONS[k];
+              var binGroupInDir = coerce(
+                binDir + "bingroup",
+                binGroup ? binGroup + "__" + binDir : null
+              );
+              fillBinOpts(traceOut, binGroupInDir, binDir);
+            }
+          } else {
+            fillBinOpts(traceOut, binGroup, orientation2binDir(traceOut));
+          }
+        }
+        for (groupName in allBinOpts) {
+          var binOpts = allBinOpts[groupName];
+          traces = binOpts.traces;
+          for (j = 0; j < BINATTRS.length; j++) {
+            var attrSpec = BINATTRS[j];
+            var attr = attrSpec.name;
+            var aStr;
+            var autoVals;
+            if (attr === "nbins" && binOpts.sizeFound) continue;
+            for (i = 0; i < traces.length; i++) {
+              traceOut = traces[i];
+              binDir = binOpts.dirs[i];
+              aStr = attrSpec.aStr[binDir];
+              if (nestedProperty(traceOut._input, aStr).get() !== void 0) {
+                binOpts[attr] = coerce(aStr);
+                binOpts[attr + "Found"] = true;
+                break;
+              }
+              autoVals = (traceOut._autoBin || {})[binDir] || {};
+              if (autoVals[attr]) {
+                nestedProperty(traceOut, aStr).set(autoVals[attr]);
+              }
+            }
+            if (attr === "start" || attr === "end") {
+              for (; i < traces.length; i++) {
+                traceOut = traces[i];
+                if (traceOut["_" + binDir + "bingroup"]) {
+                  autoVals = (traceOut._autoBin || {})[binDir] || {};
+                  coerce(aStr, autoVals[attr]);
+                }
+              }
+            }
+            if (attr === "nbins" && !binOpts.sizeFound && !binOpts.nbinsFound) {
+              traceOut = traces[0];
+              binOpts[attr] = coerce(aStr);
+            }
+          }
+        }
+      };
+    }
+  });
+
+  // src/traces/histogram/hover.js
+  var require_hover6 = __commonJS({
+    "src/traces/histogram/hover.js"(exports, module) {
+      "use strict";
+      var barHover = require_hover3().hoverPoints;
+      var hoverLabelText = require_axes().hoverLabelText;
+      module.exports = function hoverPoints(pointData, xval, yval, hovermode, opts) {
+        var pts = barHover(pointData, xval, yval, hovermode, opts);
+        if (!pts) return;
+        pointData = pts[0];
+        var di = pointData.cd[pointData.index];
+        var trace = pointData.cd[0].trace;
+        if (!trace.cumulative.enabled) {
+          var posLetter = trace.orientation === "h" ? "y" : "x";
+          pointData[posLetter + "Label"] = hoverLabelText(pointData[posLetter + "a"], [di.ph0, di.ph1], trace[posLetter + "hoverformat"]);
+        }
+        return pts;
+      };
+    }
+  });
+
+  // src/traces/histogram/event_data.js
+  var require_event_data3 = __commonJS({
+    "src/traces/histogram/event_data.js"(exports, module) {
+      "use strict";
+      module.exports = function eventData(out, pt, trace, cd, pointNumber) {
+        out.x = "xVal" in pt ? pt.xVal : pt.x;
+        out.y = "yVal" in pt ? pt.yVal : pt.y;
+        if ("zLabelVal" in pt) out.z = pt.zLabelVal;
+        if (pt.xa) out.xaxis = pt.xa;
+        if (pt.ya) out.yaxis = pt.ya;
+        if (!(trace.cumulative || {}).enabled) {
+          var pts = Array.isArray(pointNumber) ? cd[0].pts[pointNumber[0]][pointNumber[1]] : cd[pointNumber].pts;
+          out.pointNumbers = pts;
+          out.binNumber = out.pointNumber;
+          delete out.pointNumber;
+          delete out.pointIndex;
+          var pointIndices;
+          if (trace._indexToPoints) {
+            pointIndices = [];
+            for (var i = 0; i < pts.length; i++) {
+              pointIndices = pointIndices.concat(trace._indexToPoints[pts[i]]);
+            }
+          } else {
+            pointIndices = pts;
+          }
+          out.pointIndices = pointIndices;
+        }
+        return out;
+      };
+    }
+  });
+
+  // src/traces/histogram/index.js
+  var require_histogram = __commonJS({
+    "src/traces/histogram/index.js"(exports, module) {
+      "use strict";
+      module.exports = {
+        attributes: require_attributes26(),
+        layoutAttributes: require_layout_attributes6(),
+        supplyDefaults: require_defaults22(),
+        crossTraceDefaults: require_cross_trace_defaults3(),
+        supplyLayoutDefaults: require_layout_defaults5(),
+        calc: require_calc7().calc,
+        crossTraceCalc: require_cross_trace_calc().crossTraceCalc,
+        plot: require_plot3().plot,
+        layerName: "barlayer",
+        style: require_style4().style,
+        styleOnSelect: require_style4().styleOnSelect,
+        colorbar: require_marker_colorbar(),
+        hoverPoints: require_hover6(),
+        selectPoints: require_select3(),
+        eventData: require_event_data3(),
+        moduleType: "trace",
+        name: "histogram",
+        basePlotModule: require_cartesian(),
+        categories: ["bar-like", "cartesian", "svg", "bar", "histogram", "oriented", "errorBarsOK", "showLegend"],
+        meta: {}
+      };
+    }
+  });
+
+  // lib/histogram.js
+  var require_histogram2 = __commonJS({
+    "lib/histogram.js"(exports, module) {
+      "use strict";
+      module.exports = require_histogram();
+    }
+  });
+
+  // src/traces/pie/attributes.js
+  var require_attributes27 = __commonJS({
     "src/traces/pie/attributes.js"(exports, module) {
       "use strict";
       var baseAttrs = require_attributes2();
@@ -65290,12 +65822,12 @@ var Plotly = (() => {
   });
 
   // src/traces/pie/defaults.js
-  var require_defaults22 = __commonJS({
+  var require_defaults23 = __commonJS({
     "src/traces/pie/defaults.js"(exports, module) {
       "use strict";
       var isNumeric = require_fast_isnumeric();
       var Lib = require_lib();
-      var attributes = require_attributes26();
+      var attributes = require_attributes27();
       var handleDomainDefaults = require_domain().defaults;
       var handleText = require_defaults19().handleText;
       var coercePattern = require_lib().coercePattern;
@@ -65582,7 +66114,7 @@ var Plotly = (() => {
   });
 
   // src/traces/pie/event_data.js
-  var require_event_data3 = __commonJS({
+  var require_event_data4 = __commonJS({
     "src/traces/pie/event_data.js"(exports, module) {
       "use strict";
       var appendArrayMultiPointValues = require_helpers2().appendArrayMultiPointValues;
@@ -65630,7 +66162,7 @@ var Plotly = (() => {
       var clearMinTextSize = uniformText.clearMinTextSize;
       var TEXTPAD = require_constants14().TEXTPAD;
       var helpers = require_helpers4();
-      var eventData = require_event_data3();
+      var eventData = require_event_data4();
       var isValidTextValue = require_lib().isValidTextValue;
       function plot(gd, cdModule) {
         var isStatic = gd._context.staticPlot;
@@ -66526,8 +67058,8 @@ var Plotly = (() => {
     "src/traces/pie/index.js"(exports, module) {
       "use strict";
       module.exports = {
-        attributes: require_attributes26(),
-        supplyDefaults: require_defaults22().supplyDefaults,
+        attributes: require_attributes27(),
+        supplyDefaults: require_defaults23().supplyDefaults,
         supplyLayoutDefaults: require_layout_defaults7(),
         layoutAttributes: require_layout_attributes8(),
         calc: require_calc10().calc,
@@ -66553,7 +67085,7 @@ var Plotly = (() => {
   });
 
   // src/traces/surface/attributes.js
-  var require_attributes27 = __commonJS({
+  var require_attributes28 = __commonJS({
     "src/traces/surface/attributes.js"(exports, module) {
       "use strict";
       var Color2 = require_color();
@@ -66750,13 +67282,13 @@ var Plotly = (() => {
   });
 
   // src/traces/surface/defaults.js
-  var require_defaults23 = __commonJS({
+  var require_defaults24 = __commonJS({
     "src/traces/surface/defaults.js"(exports, module) {
       "use strict";
       var Registry = require_registry();
       var Lib = require_lib();
       var colorscaleDefaults = require_defaults2();
-      var attributes = require_attributes27();
+      var attributes = require_attributes28();
       var MIN = 0.1;
       function createWave(n, minOpacity) {
         var arr = [];
@@ -103423,7 +103955,7 @@ var Plotly = (() => {
   });
 
   // src/plots/gl3d/layout/attributes.js
-  var require_attributes28 = __commonJS({
+  var require_attributes29 = __commonJS({
     "src/plots/gl3d/layout/attributes.js"(exports, module) {
       "use strict";
       module.exports = {
@@ -103760,7 +104292,7 @@ var Plotly = (() => {
   });
 
   // src/plots/gl3d/layout/defaults.js
-  var require_defaults24 = __commonJS({
+  var require_defaults25 = __commonJS({
     "src/plots/gl3d/layout/defaults.js"(exports, module) {
       "use strict";
       var Lib = require_lib();
@@ -103866,12 +104398,12 @@ var Plotly = (() => {
       exports.attr = SCENE;
       exports.idRoot = SCENE;
       exports.idRegex = exports.attrRegex = Lib.counterRegex("scene");
-      exports.attributes = require_attributes28();
+      exports.attributes = require_attributes29();
       exports.layoutAttributes = require_layout_attributes9();
       exports.baseLayoutAttrOverrides = overrideAll({
         hoverlabel: fxAttrs.hoverlabel
       }, "plot", "nested");
-      exports.supplyLayoutDefaults = require_defaults24();
+      exports.supplyLayoutDefaults = require_defaults25();
       exports.plot = function plot(gd) {
         var fullLayout = gd._fullLayout;
         var fullData = gd._fullData;
@@ -103974,8 +104506,8 @@ var Plotly = (() => {
     "src/traces/surface/index.js"(exports, module) {
       "use strict";
       module.exports = {
-        attributes: require_attributes27(),
-        supplyDefaults: require_defaults23().supplyDefaults,
+        attributes: require_attributes28(),
+        supplyDefaults: require_defaults24().supplyDefaults,
         colorbar: {
           min: "cmin",
           max: "cmax"
@@ -104000,7 +104532,7 @@ var Plotly = (() => {
   });
 
   // src/traces/sankey/attributes.js
-  var require_attributes29 = __commonJS({
+  var require_attributes30 = __commonJS({
     "src/traces/sankey/attributes.js"(exports, module) {
       "use strict";
       var fontAttrs = require_font_attributes();
@@ -104197,11 +104729,11 @@ var Plotly = (() => {
   });
 
   // src/traces/sankey/defaults.js
-  var require_defaults25 = __commonJS({
+  var require_defaults26 = __commonJS({
     "src/traces/sankey/defaults.js"(exports, module) {
       "use strict";
       var Lib = require_lib();
-      var attributes = require_attributes29();
+      var attributes = require_attributes30();
       var Color2 = require_color();
       var tinycolor = require_tinycolor();
       var handleDomainDefaults = require_domain().defaults;
@@ -110419,7 +110951,7 @@ var Plotly = (() => {
   });
 
   // src/traces/sankey/constants.js
-  var require_constants15 = __commonJS({
+  var require_constants16 = __commonJS({
     "src/traces/sankey/constants.js"(exports, module) {
       "use strict";
       module.exports = {
@@ -110453,7 +110985,7 @@ var Plotly = (() => {
       var d3 = require_d3();
       var d3Sankey = require_d3_sankey();
       var d3SankeyCircular = require_d3_sankey_circular();
-      var c = require_constants15();
+      var c = require_constants16();
       var tinycolor = require_tinycolor();
       var Color2 = require_color();
       var Drawing = require_drawing();
@@ -111186,7 +111718,7 @@ var Plotly = (() => {
       var render = require_render();
       var Fx = require_fx();
       var Color2 = require_color();
-      var cn = require_constants15().cn;
+      var cn = require_constants16().cn;
       var _ = Lib._;
       function renderableValuePresent(d) {
         return d !== "";
@@ -111655,8 +112187,8 @@ var Plotly = (() => {
     "src/traces/sankey/index.js"(exports, module) {
       "use strict";
       module.exports = {
-        attributes: require_attributes29(),
-        supplyDefaults: require_defaults25(),
+        attributes: require_attributes30(),
+        supplyDefaults: require_defaults26(),
         calc: require_calc12(),
         plot: require_plot7(),
         moduleType: "trace",
@@ -119783,6 +120315,7 @@ var Plotly = (() => {
         require_bar2(),
         require_box2(),
         require_heatmap2(),
+        require_histogram2(),
         require_pie2(),
         require_surface2(),
         require_sankey2(),
